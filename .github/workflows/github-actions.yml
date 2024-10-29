@@ -19,22 +19,26 @@ jobs:
         registry: ghcr.io
         username: ${{github.actor}}  
         password: ${{ secrets.GITHUB_TOKEN }}  
-
-    - id: lowercase_github_repository
-      uses: ASzc/change-string-case-action@v2
-      with:
-        string: ${{ github.repository }}
-
-    - name: Build development
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        push: true
-        tags: ghcr.io/${{ steps.lowercase_github_repository.outputs.lowercase }}:development
         
-    - name: Build production
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v5
+       with:
+        images: ghcr.io/${{ github.repository }}
+        tags: |
+              type=semver,pattern={{version}}
+              type=semver,pattern={{major}}.{{minor}}
+              type=semver,pattern={{major}}
+              type=ref,event=branch
+              type=ref,event=pr
+              type=sha
+              type=semver,pattern={{version}},prefix=v
+              type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build 
       uses: docker/build-push-action@v2
       with:
         context: .
         push: true
-        tags: ghcr.io/${{ steps.lowercase_github_repository.outputs.lowercase }}:production
+        tags: ${{ steps.meta.outputs.tags }}
+
