@@ -36,4 +36,8 @@ COPY --from=builder /app/.next ./.next
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+FROM base as production
+CMD ["npm", "run", "start"]
+
+FROM base as development
+CMD ["npm", "run", "dev"]
