@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:report": "next lint --output-file eslint_report.json --format json"
   },
   "dependencies": {
     "react": "19.0.0-rc-69d4b800-20241021",
